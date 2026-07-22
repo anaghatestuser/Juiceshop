@@ -28,9 +28,9 @@
     "url": "https://github.com/juice-shop/juice-shop.git"
   },
   "license": "MIT",
-  "author": "Björn Kimminich <bjoern.kimminich@owasp.org> (https://kimminich.de)",
+  "author": "Bj\u00f6rn Kimminich <bjoern.kimminich@owasp.org> (https://kimminich.de)",
   "contributors": [
-    "Björn Kimminich",
+    "Bj\u00f6rn Kimminich",
     "Jannik Hollenbach",
     "Aashish683",
     "greenkeeper[bot]",
@@ -104,7 +104,7 @@
     "cookie-parser": "^1.4.7",
     "cookieconsent": "^3.1.1",
     "cors": "^2.8.5",
-    "download": "^8.0.0",
+    "download": "8.0.0-lineaje-01",
     "errorhandler": "^1.5.1",
     "ethers": "^6.16.0",
     "express": "^4.22.1",
@@ -128,8 +128,8 @@
     "helmet": "^4.6.0",
     "html-entities": "^1.4.0",
     "i18n": "^0.11.1",
-    "js-yaml": "^3.14.0",
-    "jsonwebtoken": "0.4.0",
+    "js-yaml": "3.15.0",
+    "jsonwebtoken": "0.4.1",
     "libxml2-wasm": "^0.7.1",
     "marsdb": "^0.6.11",
     "material-icons": "^1.13.14",
@@ -227,5 +227,17 @@
     "arm64",
     "arm"
   ],
-  "heroku-run-build-script": true
+  "heroku-run-build-script": true,
+  "overrides": {
+    "ws": "7.5.13",
+    "socket.io-parser": "4.2.7",
+    "tar": "6.2.1",
+    "http-cache-semantics": "3.8.1",
+    "decompress": "4.2.1",
+    "lodash": "4.18.1",
+    "jws": "0.2.6",
+    "engine.io": "4.1.2",
+    "minimatch": "3.1.5",
+    "lodash.set": "4.3.2"
+  }
 }
