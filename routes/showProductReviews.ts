@@ -28,7 +28,12 @@ global.sleep = (time: number) => {
 export function showProductReviews () {
   return (req: Request, res: Response, next: NextFunction) => {
     // Truncate id to avoid unintentional RCE
-    const id = !utils.isChallengeEnabled(challenges.noSqlCommandChallenge) ? Number(req.params.id) : utils.trunc(req.params.id, 40)
+    const rawId = !utils.isChallengeEnabled(challenges.noSqlCommandChallenge) ? Number(req.params.id) : utils.trunc(req.params.id, 40)
+    // Only a bare (optionally negative) integer literal may be interpolated into the
+    // `$where` JS expression below. Anything else (operators, quotes, function calls, ...)
+    // cannot be used to inject additional logic and is normalized to a value that matches
+    // no document, closing the NoSQL/JS injection vector regardless of the challenge flag above.
+    const id = /^-?\d+$/.test(String(rawId)) ? rawId : NaN
 
     // Measure how long the query takes, to check if there was a nosql dos attack
     const t0 = new Date().getTime()
