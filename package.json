@@ -122,7 +122,7 @@
     "graceful-fs": "^4.2.11",
     "grunt": "^1.6.1",
     "grunt-contrib-compress": "^1.6.0",
-    "grunt-replace-json": "^0.1.0",
+    "grunt-replace-json": "0.1.0-lineaje-01",
     "hashids": "^2.3.0",
     "hbs": "^4.2.0",
     "helmet": "^4.6.0",

@@ -61,6 +61,7 @@
     "sass": "^1.86.3",
     "snarkdown": "^1.2.2",
     "socket.io-client": "4.6.2",
+    "socket.io-parser": "4.2.7",
     "solidity-browser-compiler": "^1.1.0",
     "tslib": "^2.5.0",
     "typescript": "~5.9.3",
