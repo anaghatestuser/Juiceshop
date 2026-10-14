@@ -46,7 +46,7 @@
     "canvas-confetti": "^1.9.3",
     "codemirror": "^6.0.2",
     "cookieconsent": "^3.1.1",
-    "ethers": "^5.7.2",
+    "ethers": "5.8.0-lineaje-01",
     "flag-icons": "^6.9.2",
     "font-mfizz": "^2.4.1",
     "jwt-decode": "^4.0.0",
