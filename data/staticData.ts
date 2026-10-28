@@ -6,9 +6,17 @@ import { type ChallengeKey } from '@juice-shop/models/challenge'
 
 export async function loadStaticData (file: string) {
   const filePath = path.resolve('./data/static/' + file + '.yml')
-  return await readFile(filePath, 'utf8')
-    .then(safeLoad)
-    .catch(() => logger.error('Could not open file: "' + filePath + '"'))
+  try {
+    const data: unknown = await readFile(filePath, 'utf8').then(safeLoad)
+    if (!Array.isArray(data)) {
+      logger.error('Static data file "' + filePath + '" did not contain a list')
+      return []
+    }
+    return data
+  } catch {
+    logger.error('Could not open file: "' + filePath + '"')
+    return []
+  }
 }
 
 export interface StaticUser {

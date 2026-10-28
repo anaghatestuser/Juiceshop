@@ -22,6 +22,8 @@ export class LocalBackupService {
   private readonly snackBar = inject(MatSnackBar)
 
   private readonly VERSION = 1
+  private readonly SIGNATURE_KEY_STORAGE = 'owasp-juice-shop-backup-key'
+  private signatureKey?: Uint8Array
 
   async save (fileName = 'owasp_juice_shop'): Promise<void> {
     const backup: Backup = { version: this.VERSION }
@@ -48,6 +50,8 @@ export class LocalBackupService {
       backup.continueCodeFixIt = this.cookieService.get('continueCodeFixIt') ? this.cookieService.get('continueCodeFixIt') : undefined
     }
 
+    backup.signature = this.computeSignature(backup)
+
     const blob = new Blob([JSON.stringify(backup)], { type: 'text/plain;charset=utf-8' })
     this.saveFile(blob, `${fileName}-${new Date().toISOString().split('T')[0]}.json`)
   }
@@ -66,6 +70,10 @@ export class LocalBackupService {
       const backup: Backup = JSON.parse(backupData)
 
       if (backup.version === this.VERSION) {
+        if (!this.isValidBackup(backup)) {
+          this.snackBarHelperService.open('Backup file contains invalid data and could not be restored.', 'errorBar')
+          return
+        }
         this.restoreCookie('welcomebanner_status', backup.banners?.welcomeBannerStatus)
         this.restoreCookie('cookieconsent_status', backup.banners?.cookieConsentStatus)
         this.restoreCookie('language', backup.language)
@@ -94,6 +102,35 @@ export class LocalBackupService {
     }).catch((err: Error) => {
       this.snackBarHelperService.open(`Backup restore operation failed: ${err.message}`, 'errorBar')
     }))
+  }
+
+  private readonly supportedLanguages = ['ar_SA', 'az_AZ', 'bg_BG', 'bn_BD', 'ca_ES', 'cs_CZ', 'da_DK', 'de_CH', 'de_DE', 'el_GR', 'en', 'es_ES', 'et_EE', 'fa_IR', 'fi_FI', 'fr_FR', 'ga_IE', 'he_IL', 'hi_IN', 'hu_HU', 'id_ID', 'it_IT', 'ja_JP', 'ka_GE', 'ko_KR', 'lv_LV', 'my_MM', 'nl_NL', 'no_NO', 'pl_PL', 'pt_BR', 'pt_PT', 'ro_RO', 'ru_RU', 'si_LK', 'sv_SE', 'th_TH', 'tr_TR', 'uk_UA', 'zh_CN', 'zh_HK', 'zh_TW']
+
+  private readonly continueCodePattern = /^[a-zA-Z0-9]+$/
+
+  private readonly cookieConsentStates = ['dismiss', 'allow', 'deny']
+
+  private isValidBackup (backup: Backup): boolean {
+    if (backup.language !== undefined && (typeof backup.language !== 'string' || !this.supportedLanguages.includes(backup.language))) {
+      return false
+    }
+    for (const continueCode of [backup.continueCode, backup.continueCodeFindIt, backup.continueCodeFixIt]) {
+      if (continueCode !== undefined && (typeof continueCode !== 'string' || !this.continueCodePattern.test(continueCode))) {
+        return false
+      }
+    }
+    if (backup.banners !== undefined) {
+      if (backup.banners === null || typeof backup.banners !== 'object' || Array.isArray(backup.banners)) {
+        return false
+      }
+      if (backup.banners.welcomeBannerStatus !== undefined && backup.banners.welcomeBannerStatus !== 'dismiss') {
+        return false
+      }
+      if (backup.banners.cookieConsentStatus !== undefined && !this.cookieConsentStates.includes(backup.banners.cookieConsentStatus)) {
+        return false
+      }
+    }
+    return true
   }
 
   private restoreCookie (cookieName: string, cookieValue: string) {
